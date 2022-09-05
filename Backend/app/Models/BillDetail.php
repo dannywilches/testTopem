@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class BillDetail extends Model
 {
     use HasFactory;
+    protected $table = 'bill_detail';
     protected $fillable = [
         'item_description',
         'quantity',

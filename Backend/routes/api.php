@@ -26,3 +26,6 @@ Route::group(['middleware' => ['jwt.verify']], function() {
     Route::post('user','App\Http\Controllers\UserController@getAuthenticatedUser');
 
 });
+Route::group(['prefix' => 'bills'], function () {
+    Route::get('list-all','App\Http\Controllers\BillsController@index');
+});
