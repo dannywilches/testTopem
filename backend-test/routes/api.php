@@ -31,6 +31,10 @@ Route::group(['middleware' => ['jwt.auth']], function (){
     });
 
     Route::group(['prefix' => 'bills'], function () {
-        Route::get('list-all','App\Http\Controllers\BillsController@index');
+        Route::get('list','App\Http\Controllers\BillsController@index');
+        Route::get('detail/{id}','App\Http\Controllers\BillsController@show');
+        Route::post('create','App\Http\Controllers\BillsController@store');
+        Route::put('update/{id}','App\Http\Controllers\BillsController@update');
+        Route::delete('delete/{id}','App\Http\Controllers\BillsController@destroy');
     });
 });

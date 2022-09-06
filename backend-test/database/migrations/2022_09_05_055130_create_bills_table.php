@@ -20,8 +20,8 @@ return new class extends Migration
             $table->double('value_before_iva', 16, 5)->nullable();
             $table->double('iva', 16, 5)->nullable();
             $table->double('total_value', 16, 5)->nullable();
-            $table->foreignId('customer_id')->constrained('customer');
-            $table->foreignId('vendor_id')->constrained('vendor');
+            $table->string('customer');
+            $table->string('vendor');
             $table->timestamps();
         });
     }

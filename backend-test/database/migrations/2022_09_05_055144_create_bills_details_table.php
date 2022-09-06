@@ -16,7 +16,7 @@ return new class extends Migration
         Schema::create('bill_details', function (Blueprint $table) {
             $table->id();
             $table->string('item_description');
-            $table->double('quantity', 6, 2);
+            $table->double('quantity', 16, 5);
             $table->double('unit_value', 16, 5);
             $table->double('total_value', 16, 5);
             $table->foreignId('bill_id')->constrained('bill');

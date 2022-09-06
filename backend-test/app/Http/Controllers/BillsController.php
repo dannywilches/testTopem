@@ -5,8 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Bills;
 use App\Models\BillsDetail;
-use App\Models\Customers;
-use App\Models\Vendors;
+use DB;
 
 class BillsController extends Controller
 {
@@ -26,7 +25,7 @@ class BillsController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create(Request $request)
     {
         //
     }
@@ -39,7 +38,39 @@ class BillsController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $last_bill = DB::table('bill')->max('bill_number');
+
+        $bill = new Bills();
+        $bill->bill_number = $last_bill+1;
+        $bill->date_bill = now();
+        $bill->customer = $request->customer;
+        $bill->vendor = $request->vendor;
+
+        $bill->save();
+        $bill_id = $bill->id;
+
+        $total_value = 0;
+        foreach ($request->list_items as $value) {
+            $bill_detail = new BillsDetail();
+            $bill_detail->item_description = $value["item_description"];
+            $bill_detail->quantity = intval($value["quantity"]);
+            $bill_detail->unit_value = intval($value["unit_value"]);
+            $bill_detail->total_value = intval($value["total_value"]);
+            $bill_detail->bill_id = $bill_id;
+            $bill_detail->save();
+
+            $total_value += ($value["total_value"]);
+        }
+        $total_iva = ($total_value*19)/100;
+        $total_before_iva = $total_value-$total_iva;
+
+        $bill->value_before_iva = $total_before_iva;
+        $bill->iva = $total_iva;
+        $bill->total_value = $total_value;
+
+        $bill->save();
+        // return response()->json([], 200, 'Factura registrada');
+        return [$bill, $bill_detail];
     }
 
     /**
@@ -50,7 +81,8 @@ class BillsController extends Controller
      */
     public function show($id)
     {
-        //
+        $bill = Bills::with('ItemBills')->find($id);
+        return $bill;
     }
 
     /**
@@ -73,7 +105,34 @@ class BillsController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $total_value = 0;
+        foreach ($request->list_items as $value) {
+            $bill_detail = BillsDetail::find($value["id"]);
+            if ($bill_detail == null) {
+                $bill_detail = new BillsDetail();
+                $bill_detail->bill_id = $id;
+            }
+            $bill_detail->item_description = $value["item_description"];
+            $bill_detail->quantity = intval($value["quantity"]);
+            $bill_detail->unit_value = intval($value["unit_value"]);
+            $bill_detail->total_value = intval($value["total_value"]);
+            $bill_detail->save();
+
+            $total_value += ($value["total_value"]);
+        }
+        $total_iva = ($total_value*19)/100;
+        $total_before_iva = $total_value-$total_iva;
+
+        $bill = Bills::find($id);
+        $bill->customer = $request->customer;
+        $bill->vendor = $request->vendor;
+        $bill->value_before_iva = $total_before_iva;
+        $bill->iva = $total_iva;
+        $bill->total_value = $total_value;
+
+        $bill->save();
+        // return response()->json([], 200, 'Factura registrada');
+        return [$bill, $bill_detail];
     }
 
     /**
@@ -84,6 +143,8 @@ class BillsController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $bill = Bills::find($id);
+        $bill->delete();
+        return response()->json($bill, 200);
     }
 }

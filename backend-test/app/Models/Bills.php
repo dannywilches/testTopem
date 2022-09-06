@@ -19,18 +19,12 @@ class Bills extends Model
         'vendor_id',
     ];
 
-    public function Customer()
-    {
-        return $this->belongsTo(Customers::class);
-    }
-
-    public function Vendor()
-    {
-        return $this->belongsTo(Vendors::class);
-    }
+    protected $casts = [
+        'date_bill' => 'datetime:M d /Y h:i:s a',
+    ];
 
     public function ItemBills()
     {
-        return $this->hasMany(BillDetails::class);
+        return $this->hasMany(BillsDetail::class, 'bill_id', 'id');
     }
 }
