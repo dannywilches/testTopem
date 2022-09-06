@@ -36,22 +36,21 @@
           }
       },
       methods: {
-          LoginSession() {
-              const item_session = {
-                  email: this.email,
-                  password: this.password,
-              };
-              axios
-                  .post('auth/login', item_session)
-                  .then(response => {
-                      console.log(response);
-                      localStorage.setItem('token', response.data.token);
-                      this.$router.push('/bills');
-                  }).catch(error => {
-                    console.log(error);
-                    Swal.fire("No fue posible iniciar sesión", '', 'error');
-                  })
-          }
+        // Función que llama el servicio que realiza el logeo enviando las credenciales
+        LoginSession() {
+            const item_session = {
+                email: this.email,
+                password: this.password,
+            };
+            axios
+                .post('auth/login', item_session)
+                .then(response => {
+                    localStorage.setItem('token', response.data.token);
+                    this.$router.push('/bills');
+                }).catch(error => {
+                  Swal.fire("No fue posible iniciar sesión", '', 'error');
+                })
+        }
       }
   }
 </script>

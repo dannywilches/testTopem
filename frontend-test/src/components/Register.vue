@@ -48,37 +48,36 @@
           }
       },
       methods: {
-          RegisterUser() {
-              const item_register = {
-                  name: this.name,
-                  email: this.email,
-                  password: this.password,
-                  password_confirmation: this.password_confirmation,
-              };
-              axios
-                  .post('auth/register', item_register)
-                  .then(response => {
-                      console.log(response);
-                      if (response.status == 201) {
-                        // this.$swal.fire('Usuario Registrado');
-                        Swal.fire("Usuario Registrado", '', 'success').then((result) => {
-                          if (result.isConfirmed) {
-                            this.$router.push('/login');
-                          }
-                        });
-                      }
-                      else {
-                        Swal.fire("El Usuario no pudo ser registrado valide los datos ingresados o intente nuevamente", '', 'error').then((result) => {
-                          if (result.isConfirmed) {
-                            this.$router.push('/login');
-                          }
-                        });
+        // Función que realiza el registro de nuevos usuarios enviando todos los datos necesarios
+        RegisterUser() {
+            const item_register = {
+                name: this.name,
+                email: this.email,
+                password: this.password,
+                password_confirmation: this.password_confirmation,
+            };
+            axios
+                .post('auth/register', item_register)
+                .then(response => {
+                    if (response.status == 201) {
+                      // this.$swal.fire('Usuario Registrado');
+                      Swal.fire("Usuario Registrado", '', 'success').then((result) => {
+                        if (result.isConfirmed) {
+                          this.$router.push('/login');
+                        }
+                      });
+                    }
+                    else {
+                      Swal.fire("El Usuario no pudo ser registrado valide los datos ingresados o intente nuevamente", '', 'error').then((result) => {
+                        if (result.isConfirmed) {
+                          this.$router.push('/login');
+                        }
+                      });
 
-                      }
-                  }).catch(error => {
-                    console.log(error);
-                    Swal.fire("El Usuario no pudo ser registrado valide los datos ingresados o intente nuevamente", '', 'error');
-                  })
+                    }
+                }).catch(error => {
+                  Swal.fire("El Usuario no pudo ser registrado valide los datos ingresados o intente nuevamente", '', 'error');
+                })
           }
       }
   }

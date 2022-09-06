@@ -10,7 +10,7 @@ use DB;
 class BillsController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Funcioón que devuelve todas las facturas en el sistema
      *
      * @return \Illuminate\Http\Response
      */
@@ -31,7 +31,9 @@ class BillsController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Función para crear facturas nuevas, donde se realiza primero la creación de la factura,
+     * una vez creada se guardan los items en la tabla auxiliar y una vez calculados los valores
+     * los actualiza en la tabla principal
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
@@ -69,12 +71,12 @@ class BillsController extends Controller
         $bill->total_value = $total_value;
 
         $bill->save();
-        // return response()->json([], 200, 'Factura registrada');
-        return [$bill, $bill_detail];
+        return response()->json('Factura registrada', 201);
     }
 
     /**
-     * Display the specified resource.
+     * Trae la información de la factura solicita de acuerdo al parametro enviado junto con
+     * la información detallada de la factura
      *
      * @param  int  $id
      * @return \Illuminate\Http\Response
@@ -97,7 +99,8 @@ class BillsController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+     * Actualiza la información de la factura y sus respectivos elementos, en caso de agregarse
+     * mas elementos son ingresados también
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
@@ -131,20 +134,20 @@ class BillsController extends Controller
         $bill->total_value = $total_value;
 
         $bill->save();
-        // return response()->json([], 200, 'Factura registrada');
-        return [$bill, $bill_detail];
+        return response()->json('Factura actualizada', 201);
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Elimina la factura indicada por parametro
      *
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
     public function destroy($id)
     {
+        $bills_detail = BillsDetail::where('bill_id', $id)->delete();
         $bill = Bills::find($id);
         $bill->delete();
-        return response()->json($bill, 200);
+        return response()->json('Factura eliminada', 201);
     }
 }

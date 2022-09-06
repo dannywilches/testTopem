@@ -18,18 +18,28 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
+/**
+ * Llamados con el prefijo auth donde se realiza el login y el registro, estás funciones no
+ * son protegidas por el middleware así que pueden ser llamadas sin problema
+ */
 Route::group(['prefix' => 'auth'], function (){
     Route::post('login', 'App\Http\Controllers\LoginController@login');
     Route::post('register', 'App\Http\Controllers\LoginController@register');
 });
 
+/**
+ * Agrupación de llamados dentro del middleware haciendo uso del JWT, el cual debe enviarse el token
+ * generado una vez logeado para poder acceder a estas funciones
+ */
 Route::group(['middleware' => ['jwt.auth']], function (){
     Route::group(['prefix' => 'auth'], function () {
         Route::post('user', 'App\Http\Controllers\LoginController@getAuthenticatedUser');
         Route::get('expire', 'App\Http\Controllers\LoginController@expireToken');
-        Route::post('me', 'App\Http\Controllers\LoginController@me');
     });
 
+    /**
+     * Agrupación de llamados para el CRUD y gestión de las facturas
+    */
     Route::group(['prefix' => 'bills'], function () {
         Route::get('list','App\Http\Controllers\BillsController@index');
         Route::get('detail/{id}','App\Http\Controllers\BillsController@show');

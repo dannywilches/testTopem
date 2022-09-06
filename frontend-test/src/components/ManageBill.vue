@@ -57,6 +57,7 @@
 </template>
 <script>
   import axios from 'axios';
+  import Swal from 'sweetalert2';
   export default {
     name: 'ManageBill',
     components: {
@@ -74,14 +75,14 @@
       }
     },
     created() {
+      // Validación que de acuerdo al parametro si existe es una actualización de lo contrario una creación de facturas
       if (this.$route.params.id != undefined) {
         this.bill_id = this.$route.params.id;
         this.getBillId();
       }
-      console.log(this.$route.params.id);
-      console.log(this.bill_id);
     },
     methods: {
+      // función que llama al servicio para crear una factura
       createBill() {
         const object = {
           vendor: this.vendor,
@@ -89,14 +90,15 @@
           list_items: this.list_items
         }
         axios.post('bills/create', object).then(resp => {
-          console.log(resp);
-          if (resp.status == 200) {
+          if (resp.status == 201) {
             this.$router.push('/bills');
+            Swal.fire(resp.data, '', 'success')
           }
         }).catch(error => {
-          console.log(error);
+          Swal.fire(error, '', 'error')
         });
       },
+      // función que llama al servicio para actualizar una factura
       updateBill() {
         const object = {
           vendor: this.vendor,
@@ -104,25 +106,25 @@
           list_items: this.list_items
         }
         axios.put(`bills/update/${this.bill_id}`, object).then(resp => {
-          console.log(resp);
-          if (resp.status == 200) {
+          if (resp.status == 201) {
             this.$router.push('/bills');
+            Swal.fire(resp.data, '', 'success')
           }
         }).catch(error => {
-          console.log(error);
+          Swal.fire(error, '', 'error')
         });
       },
+      // función que llama al servicio traer toda la información de la factura actual
       getBillId() {
         axios.get(`bills/detail/${this.bill_id}`).then(resp => {
-          console.log(resp);
           this.vendor = resp.data.vendor;
           this.customer = resp.data.customer;
           this.total_bill = this.formatValue(parseInt(resp.data.total_value));
           this.list_items = resp.data.item_bills;
         }).catch(error => {
-          console.log(error);
         });
       },
+      // función que da formato para mostrar el total con separadores de miles y decimales
       formatValue(number){
         const exp = /(\d)(?=(\d{3})+(?!\d))/g;
         const rep = '$1,';
@@ -130,17 +132,20 @@
         arr[0] = arr[0].replace(exp,rep);
         return arr[1] ? arr.join('.'): arr[0];
       },
+      // función que agrega elementos a las facturas
       addItem(){
-          let num_register = this.list_items.length + 1;
-          let arr_item = {'id': num_register, 'item_description': '', 'quantity': 0, 'unit_value': 0, 'total_value': 0};
-          this.list_items.push(arr_item);
+        let num_register = this.list_items.length + 1;
+        let arr_item = {'id': num_register, 'item_description': '', 'quantity': 0, 'unit_value': 0, 'total_value': 0};
+        this.list_items.push(arr_item);
       },
+      // función que elimina elementos de las facturas
       deleteItem(key){
           let num_register = this.list_items.length;
           if (num_register > 1) {
               this.list_items.splice(key, 1);
           }
       },
+      // función que calcula el total de la factura de acuerdo a los items ingresados
       calculate(key){
         let quantity = this.list_items[key].quantity;
         let unit_value = this.list_items[key].unit_value;

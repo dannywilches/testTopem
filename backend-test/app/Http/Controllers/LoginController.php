@@ -13,6 +13,11 @@ use Tymon\JWTAuth\Exceptions\JWTException;
 
 class LoginController extends Controller
 {
+    /**
+     * Función que realiza el logeo de acuerdo a los parametros enviado por el
+     * Request que son el email y la contraseña, una vez validadas las credenciales
+     * genera el token y lo devuelve
+     */
     public function login(Request $request)
     {
         $credentials = $request->only('email', 'password');
@@ -26,6 +31,11 @@ class LoginController extends Controller
         return response()->json(compact('token'));
     }
 
+    /**
+     * Función para realizar el registro de un nuevo usuario, donde realiza las
+     * validaciones correspondientes de los campos enviados por el request para
+     * la creación del usuario, una vez validado se llama el Modelo User y se crea
+     */
     public function register(Request $request)
     {
 
@@ -50,6 +60,10 @@ class LoginController extends Controller
         return response()->json(compact('user','token'),201);
     }
 
+    /**
+     * Función que trae la información del usuario activo en sessión, en caso de que
+     * ya no esté activo indica la causa del error
+     */
     public function getAuthenticatedUser()
     {
         try {
@@ -65,34 +79,4 @@ class LoginController extends Controller
         }
         return response()->json(compact('user'));
     }
-
-    public function refreshToken()
-    {
-        $token = JWTAuth::getToken();
-        try {
-            $token = JWTAuth::refresh($token);
-            return response()->json([
-                'success' => true,
-                'token' => $token,
-                'message' => 'Token refrescado'
-            ], 200);
-        }catch (TokenExpiredException $ex) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Token ya expirado',
-                'errors' => $ex
-            ], 422);
-        }
-    }
-
-    /**
-     * Get the authenticated User.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function me()
-    {
-        return response()->json(auth()->user());
-    }
-
 }

@@ -19,9 +19,16 @@ class Bills extends Model
         'vendor_id',
     ];
 
+    /**
+     * Cast de la fecha de la factura para mostrar en el formato indicado
+     */
     protected $casts = [
         'date_bill' => 'datetime:M d /Y h:i:s a',
     ];
+
+    /**
+     * Relación de uno a muchos entre factura y detalles de la factura
+     */
 
     public function ItemBills()
     {

@@ -54,14 +54,14 @@
       this.getListBills();
     },
     methods: {
+      // Función que llama al servicio para traer todas las facturas en el sistemas
       getListBills() {
         axios.get('bills/list').then(resp => {
-          console.log(resp);
           this.list_bills = resp.data;
         }).catch(error => {
-          console.log(error);
         });
       },
+      // Función que llama al servicio para eliminar la factura seleccionada, realiza una confirmación
       deleteBill(bill_id){
         Swal.fire({
           title: 'Esta seguro de eliminar la factura seleccionada?',
@@ -72,12 +72,13 @@
         }).then((result) => {
           if (result.isConfirmed) {
             axios.delete(`bills/delete/${bill_id}`).then(resp => {
-              console.log(resp);
               this.getListBills();
+              if (resp.status == 201) {
+                Swal.fire(resp.data, '', 'success')
+              }
             }).catch(error => {
-              console.log(error);
+              Swal.fire(error, '', 'error')
             });
-            Swal.fire('Eliminada', '', 'success')
           }
         })
       }

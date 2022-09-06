@@ -17,6 +17,10 @@ class BillsDetail extends Model
         'bill_id',
     ];
 
+    /**
+     * Relación perteneciente a muchas facturas
+     */
+
     public function Bill()
     {
         return $this->belongsTo(Bills::class);
