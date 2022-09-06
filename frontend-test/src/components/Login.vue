@@ -16,7 +16,6 @@
       </div>
       <div class="card-footer text-center">
         <button class="btn btn-success" @click="LoginSession()"> Login</button>
-        <!-- <button class="btn btn-info"> Registrarse</button> -->
       </div>
     </div>
   </div>
@@ -24,7 +23,7 @@
 <script>
   import axios from 'axios';
   import RouterLink from 'vue-router';
-  // import store from '../store'
+  import Swal from 'sweetalert2';
   export default {
       name: 'Login',
       components: {
@@ -46,8 +45,11 @@
                   .post('auth/login', item_session)
                   .then(response => {
                       console.log(response);
+                      localStorage.setItem('token', response.data.token);
+                      this.$router.push('/bills');
                   }).catch(error => {
                     console.log(error);
+                    Swal.fire("No fue posible iniciar sesión", '', 'error');
                   })
           }
       }

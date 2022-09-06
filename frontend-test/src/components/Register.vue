@@ -32,6 +32,7 @@
 <script>
   import axios from 'axios';
   import RouterLink from 'vue-router';
+  import Swal from 'sweetalert2';
   // import store from '../store'
   export default {
       name: 'Register',
@@ -58,8 +59,25 @@
                   .post('auth/register', item_register)
                   .then(response => {
                       console.log(response);
+                      if (response.status == 201) {
+                        // this.$swal.fire('Usuario Registrado');
+                        Swal.fire("Usuario Registrado", '', 'success').then((result) => {
+                          if (result.isConfirmed) {
+                            this.$router.push('/login');
+                          }
+                        });
+                      }
+                      else {
+                        Swal.fire("El Usuario no pudo ser registrado valide los datos ingresados o intente nuevamente", '', 'error').then((result) => {
+                          if (result.isConfirmed) {
+                            this.$router.push('/login');
+                          }
+                        });
+
+                      }
                   }).catch(error => {
                     console.log(error);
+                    Swal.fire("El Usuario no pudo ser registrado valide los datos ingresados o intente nuevamente", '', 'error');
                   })
           }
       }

@@ -1,8 +1,9 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import HelloWorld from '@/components/HelloWorld'
 import Login from '@/components/Login'
 import Register from '@/components/Register'
+import Bills from '@/components/Bills'
+import ManageBill from '@/components/ManageBill'
 
 Vue.use(Router)
 
@@ -23,8 +24,16 @@ export default new Router({
       component: Register
     },
     {
-      path: '/home',
-      component: HelloWorld
+      path: '/bills',
+      component: Bills,
+    },
+    {
+      path: '/manage-bill',
+      component: ManageBill
+    },
+    {
+      path: '/manage-bill/:id',
+      component: ManageBill
     },
   ]
 })
